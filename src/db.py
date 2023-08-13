@@ -7,6 +7,7 @@ import csv
 import random
 from collections import namedtuple
 from shutil import copyfile
+from pathlib import Path
 
 # Build an sqlLite DB to store file, pulse, species, and prediction information.
 class NABat_DB:
@@ -19,11 +20,11 @@ class NABat_DB:
         except:
             pass
 
-        self.db_name = '{}/NABatAcoustics.v1.sqlite'.format(self.path)
+        self.db_name = f'{Path(__file__).resolve().parent}/../{self.path}/NABatAcoustics.v1.sqlite'
         if os.path.isfile(self.db_name):
             pass
         else:
-            copyfile('base_db/NABatAcoustics.v1.sqlite', self.db_name)
+            copyfile(f'{Path(__file__).resolve().parent}/../base_db/NABatAcoustics.v1.sqlite', self.db_name)
 
         self.conn = self._create_connection(self.db_name)
         self.conn.row_factory = namedtuple_factory

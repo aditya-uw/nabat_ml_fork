@@ -11,10 +11,10 @@ from multiprocessing import Pool
 from pathlib import Path
 
 import numpy as np
-from db import NABat_DB
-from spectrogram import Spectrogram
+from src.db import NABat_DB
+from src.spectrogram import Spectrogram
     
-SPECTROGRAM_LOCATION = '../Downloads/data/images'
+SPECTROGRAM_LOCATION = '../../Downloads/data/images'
 
 # Given a species code, return a numeric id.
 def get_manual_id(species_code, species):

@@ -5,16 +5,16 @@
 
 import matplotlib.pyplot as plt
 import numpy as np
-import db_handler
 
+from pathlib import Path
 from PIL import Image
 import glob
-from db import NABat_DB
-import db_handler
+from src.db import NABat_DB
+import src.db_handler
 import pprint
 
 
-AUDIO_DIRECTORY = '../Downloads/data/wav'
+AUDIO_DIRECTORY = '../../Downloads/data/wav'
 db = NABat_DB()
 # Get available information for species.
 species = db.query('select * from species;')
@@ -28,6 +28,17 @@ def get_files(draw):
 def get_pulses(file_id):
     result =  db.query('select * from pulse where file_id = ? order by id',(file_id,))
     return result
+
+def insert(data):
+    db.conn.executemany(
+        "insert into prediction (model_name, pulse_id, confidence, species_id) values (?,?,?,?);", data)
+    db.conn.execute('commit;')
+
+# Given a species code, return a numeric id.
+def get_manual_id(species_code, species):
+    for s in species:
+        if s.species_code == species_code:
+            return s.id
 
 def get_sample_classes(directory):
     # Make sure there are at least 3 example files for each class we want to include.
