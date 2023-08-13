@@ -105,10 +105,10 @@ class Spectrogram():
 
         # Make sure the peak frequency is within bat frequency ranges
         # and does not overlap edges of the image matrix
-        # if peak_time < self.window_length * 0.2 or peak_time > self.window_length * 0.8:
-        #     return None
-        # elif peak_frequency <= 5000 or peak_frequency >= min(100000, (sr / 2) - 2000):
-        #     return None
+        if peak_time < self.window_length * 0.2 or peak_time > self.window_length * 0.8:
+            return None
+        elif peak_frequency <= 5000 or peak_frequency >= min(100000, (sr / 2) - 2000):
+            return None
 
         # Denoise spectrogram after finding peak time and frequency.
         stft_spec_window = self._denoise_spec(stft_spec_window)
