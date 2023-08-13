@@ -1,0 +1,12 @@
+__pycache__
+
+db0
+db1
+
+models
+
+.DS_Store
+
+model_datasets
+
+model_plot.png
