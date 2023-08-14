@@ -9,6 +9,7 @@ import multiprocessing as mp
 import random
 from multiprocessing import Pool
 from pathlib import Path
+import exiftool
 
 import numpy as np
 from src.db import NABat_DB
@@ -21,6 +22,20 @@ def get_manual_id(species_code, species):
     for s in species:
         if s.species_code == species_code:
             return s.id
+        
+
+def get_grts_id(file_path):
+
+    grts_ID = (Path(file_path).name).split('-')[-1].split('.')[0]
+    with exiftool.ExifToolHelper() as et:
+        metadata = et.get_metadata(file_path)
+        d = metadata[0]
+        if 'RIFF:Guano' in d.keys():
+            if 'Grts Id' in d['RIFF:Guano']:
+                before_ID = d['RIFF:Guano'].split('Grts Id: ')[1]
+                grts_ID = before_ID.split('\n')[0]
+
+    return grts_ID
 
 
 # This method is meant to be called in parallel and will take a single file path
@@ -44,8 +59,8 @@ def process_file(file, db_name="db0"):
     # Get metadata about the recording from the file name.
     species_code = file.split('/')[-2]
     manual_id = get_manual_id(species_code, species)
-    grts_id = file.split('-')[1].split('.')[0]
-    file_name = f'{species_code}-{grts_id}'
+    grts_id = get_grts_id(file)
+    file_name = Path(file).name.split('.')[0]
 
     file_path = Path('{}/{}/{}'.format(SPECTROGRAM_LOCATION, species_code, file_name))
     file_path.mkdir(parents=True, exist_ok=True)
