@@ -333,6 +333,71 @@ def train_model_round3(audio_directory, model_num):
         pickle.dump((h.history, sample_classes), fp)
 
 
+def train_model_round4(audio_directory, model_num):
+    # Print tensorflow version and whether we have access to a gpu.
+    print(tf.__version__)
+    print("Number of GPUs Available: ", len(tf.config.experimental.list_physical_devices('GPU')))
+
+    # Set the random seed for repeatability.
+    seed = 546
+    random.seed(seed)
+
+    # Create a place to store our trained models.
+    try:
+        os.mkdir('models')
+    except:
+        pass
+
+    sample_classes = ds.get_sample_classes(audio_directory)
+
+    # Define the batch size for the network.
+    batch_size = 32
+
+    # Create a training dataset.
+    train_dataset = tf.data.Dataset.from_generator(
+        ds.image_generator, args=['train'],
+        output_types=({"input_1": tf.float16}, tf.int32),
+        output_shapes=({"input_1": (100,100,3)}, () )                                      
+        ).batch(batch_size).prefetch(1000)
+
+    # Create a validation dataset.
+    validation_dataset = tf.data.Dataset.from_generator(
+        ds.image_generator, args=['validate'],
+        output_types=({"input_1": tf.float16}, tf.int32),
+        output_shapes=({"input_1": (100,100,3)}, () )                                      
+        ).batch(batch_size).prefetch(1000)
+    
+    # Reopen the same model for further training.
+    # Here we reduce the learning rate hyperparameter by a factor of 100
+    # to fine-tune the model.
+
+    with open(f'{Path(__file__).resolve().parent}/../models/training_history_{model_num}.p', 'wb') as fp:
+
+        model = keras.models.load_model(f'{Path(__file__).resolve().parent}/../models/m-{3}')
+
+        model.compile(
+            optimizer=tf.keras.optimizers.Adam(learning_rate=0.0000001, beta_1=0.9,
+                                            beta_2=0.999, epsilon=1e-07, amsgrad=False,
+                                            name='Adam'
+                                            ),
+            loss=tf.keras.losses.SparseCategoricalCrossentropy(),
+            metrics=['accuracy']
+            )
+
+
+        es = EarlyStopping(monitor='val_loss', mode='min', verbose=1, patience=2, restore_best_weights=True)
+
+        h = model.fit(train_dataset,
+                    validation_data=validation_dataset,
+                    epochs=10,
+                    verbose=1,
+                    callbacks=[es]
+            )
+
+        model.save(f'{Path(__file__).resolve().parent}/../models/m-{model_num}')
+        pickle.dump((h.history, sample_classes), fp)
+
+
     
 def run_predictions_on_provided_data(audio_directory, model_num, draw='test'):
 
