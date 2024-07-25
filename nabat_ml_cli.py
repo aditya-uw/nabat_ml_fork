@@ -40,7 +40,7 @@ class Processor():
         to_predict = ([], [], [])
         for i, m in enumerate(d.metadata):
             local_pulse_id = "pulse_"+str(m.offset)
-            local_pulse_path = path+"/"+local_pulse_id+".png"
+            local_pulse_path = str(path)+"/"+local_pulse_id+".png"
             img_obj = spectrogram.make_training_spectrogram(m.window, d.sample_rate)
             img_obj.save(local_pulse_path)
             
