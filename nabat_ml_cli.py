@@ -93,7 +93,7 @@ def get_params_relevant_to_data_at_location(cfg):
     data_params['site'] = cfg['site']
     print(f"Searching for files from {cfg['site']} in {cfg['month']} {cfg['year']}")
 
-    hard_drive_df = dd.read_csv(f'../output_dir/ubna_data_0[1|2]*', assume_missing=True, dtype=str).compute()
+    hard_drive_df = dd.read_csv(f'output_dir/ubna_data_*', assume_missing=True, dtype=str).compute()
     if 'Unnamed: 0' in hard_drive_df.columns:
         hard_drive_df.drop(columns='Unnamed: 0', inplace=True)
     hard_drive_df["datetime_UTC"] = pd.DatetimeIndex(hard_drive_df["datetime_UTC"])
