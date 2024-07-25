@@ -134,6 +134,55 @@ def filter_df_with_location(ubna_data_df, cfg):
 
     return filtered_location_nightly_df
 
+# if __name__ == '__main__':
+#     parser = argparse.ArgumentParser(
+#         description='Process full spectrum acoustics.')
+
+#     parser.add_argument('-p, --path', dest='path', type=str, nargs=1, default=[''],
+#                         help='The directory to use for .wav file processing.')
+
+#     parser.add_argument('-s', "--site", type=str, help="Location to process")
+#     parser.add_argument('-m', "--month", type=str, help="Month to process")
+#     parser.add_argument('-y', "--year", type=str, help="Year to process")
+#     parser.add_argument('-n', "--duration", type=int, help="Duration of files to process", default=1795)
+#     parser.add_argument('-o', "--output_dir", type=str, help="Output directory of nb__ files")
+#     parser.add_argument('-k', "--recording_start", type=str, help="Recording start to take subset")
+#     parser.add_argument('-l', "--recording_end", type=str, help="Recording end to take subset")
+
+#     parser.add_argument('-d', "--directory", type=str, help="Path to local files to process", default='none')
+#     parser.add_argument('-x', "--pattern", type=str, help="Pattern in glob to look for", default='none')
+#     parser.add_argument("--model", type=str, help="Name of analysis model", default="m-1")
+
+#     if len(sys.argv) == 1:
+#         parser.print_help()
+#         sys.exit(1)
+
+#     print('Initializing...')
+#     args = parser.parse_args()
+
+#     processor = Processor(model=args.model, directory=args.path[0])
+
+#     if args.pattern!='none':
+#         wav_filepaths = list(Path(args.directory).glob(args.pattern))
+#         for filepath in wav_filepaths:
+#             print('Processing a single wav file')
+#             single_run_with_ease(filepath, args.path[0])
+#     else:
+#         cfg=dict()
+#         cfg['site']=args.site
+#         cfg['month']=args.month
+#         cfg['year']=args.year
+#         cfg['duration']=args.duration
+#         cfg["output_dir"]=Path(args.output_dir)
+#         cfg['recording_start']=args.recording_start
+#         cfg['recording_end']=args.recording_end
+
+#         good_location_df, data_params=get_params_relevant_to_data_at_location(cfg)
+#         for filepath in data_params['good_audio_files']:
+#             print('Processing a single wav file')
+#             single_run_for_location(filepath, cfg)
+
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(
         description='Process full spectrum acoustics.')
@@ -141,17 +190,10 @@ if __name__ == '__main__':
     parser.add_argument('-p, --path', dest='path', type=str, nargs=1, default=[''],
                         help='The directory to use for .wav file processing.')
 
-    parser.add_argument('-s', "--site", type=str, help="Location to process")
-    parser.add_argument('-m', "--month", type=str, help="Month to process")
-    parser.add_argument('-y', "--year", type=str, help="Year to process")
-    parser.add_argument('-n', "--duration", type=int, help="Duration of files to process", default=1795)
-    parser.add_argument('-o', "--output_dir", type=str, help="Output directory of nb__ files")
-    parser.add_argument('-k', "--recording_start", type=str, help="Recording start to take subset")
-    parser.add_argument('-l', "--recording_end", type=str, help="Recording end to take subset")
+    parser.add_argument('-f', "--file", help="Path to local file to process")
 
-    parser.add_argument('-d', "--directory", type=str, help="Path to local files to process", default='none')
-    parser.add_argument('-x', "--pattern", type=str, help="Pattern in glob to look for", default='none')
-    parser.add_argument("--model", type=str, help="Name of analysis model", default="m-1")
+    parser.add_argument('-m', "--model", help="Name of analysis model", default="m-1")
+
 
     if len(sys.argv) == 1:
         parser.print_help()
@@ -159,25 +201,7 @@ if __name__ == '__main__':
 
     print('Initializing...')
     args = parser.parse_args()
-
     processor = Processor(model=args.model, directory=args.path[0])
 
-    if args.pattern!='none':
-        wav_filepaths = list(Path(args.directory).glob(args.pattern))
-        for filepath in wav_filepaths:
-            print('Processing a single wav file')
-            single_run_with_ease(filepath, args.path[0])
-    else:
-        cfg=dict()
-        cfg['site']=args.site
-        cfg['month']=args.month
-        cfg['year']=args.year
-        cfg['duration']=args.duration
-        cfg["output_dir"]=Path(args.output_dir)
-        cfg['recording_start']=args.recording_start
-        cfg['recording_end']=args.recording_end
-
-        good_location_df, data_params=get_params_relevant_to_data_at_location(cfg)
-        for filepath in data_params['good_audio_files']:
-            print('Processing a single wav file')
-            single_run_for_location(filepath, cfg)
+    print('Processing a single wav file')
+    single_run_with_ease(args.file, args.path[0])
