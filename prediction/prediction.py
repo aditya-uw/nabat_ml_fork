@@ -5,7 +5,7 @@ import json
 
 import numpy as np
 from sklearn.cluster import KMeans
-from tensorflow import keras
+import keras
 from collections import Counter
 
 logging.root.setLevel(logging.INFO)
