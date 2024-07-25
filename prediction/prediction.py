@@ -22,8 +22,10 @@ class Prediction():
         self.img_channels = img_channels
         self.MODEL_NAME = model_name #'m-1'
         self.DIRNAME = os.path.dirname(__file__)
-        self.MODEL = keras.models.load_model(os.path.join(
-            self.DIRNAME, 'tf-models/{}'.format(self.MODEL_NAME)))
+        # self.MODEL = keras.models.load_model(os.path.join(
+        #     self.DIRNAME, 'tf-models/{}'.format(self.MODEL_NAME)))
+        self.MODEL = keras.layers.TFSMLayer(os.path.join(
+            self.DIRNAME, 'tf-models/{}'.format(self.MODEL_NAME)), call_endpoint="serving_default")
         with open(os.path.join(self.DIRNAME, 'tf-models/training_history_{}.p'.format(self.MODEL_NAME)), 'rb') as fp:
             self.CLASS_NAMES = pickle.load(fp)[1]
 
