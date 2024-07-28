@@ -26,7 +26,7 @@ class Spectrogram():
         self.img_width = 50  # in px
         self.img_channels = 3
         self.window_length = window_length  # in ms
-        self.maximum_file_length = 45000  # in ms
+        self.maximum_file_length = 1795000  # in ms
         # advance the window start postion by (1 - overlap)%
         self.overlap = (overlap * self.window_length)
         # minimum ratio of max amplitude to mean amplitude in a window that will create a spectrogram

@@ -9,8 +9,6 @@ from collections import namedtuple
 from shutil import copyfile
 
 # Build an sqlLite DB to store file, pulse, species, and prediction information.
-
-
 class NABat_DB:
 
     def __init__(self, p='db0',):
@@ -85,16 +83,16 @@ class NABat_DB:
                 draw = 'validate'
 
         file_id = self.insert(
-            "INSERT INTO file (draw, name, duration, sample_rate, manual_id, grts_id) VALUES (?,?,?,?,?,?);", (draw, name, duration, sample_rate, manual_id, grts_id))
+            "INSERT OR REPLACE INTO file (draw, name, duration, sample_rate, manual_id, grts_id) VALUES (?,?,?,?,?,?);", (draw, name, duration, sample_rate, manual_id, grts_id))
         return file_id, draw
 
     def add_pulse(self, file_id, frequency, amplitude, sig_noise, offset, time,  window, path):
         return self.insert(
-            "INSERT INTO pulse (file_id, frequency, amplitude, sig_noise, offset, time, window, path) VALUES (?,?,?,?,?,?,?,?);", (file_id, frequency, amplitude, sig_noise, offset, time, window, path))
+            "INSERT OR REPLACE INTO pulse (file_id, frequency, amplitude, sig_noise, offset, time, window, path) VALUES (?,?,?,?,?,?,?,?);", (file_id, frequency, amplitude, sig_noise, offset, time, window, path))
 
     def add_predictions(self, data):
         self.conn.executemany(
-            "insert into prediction (model_name, pulse_id, confidence, species_id) values (?,?,?,?);", data)
+            "insert or replace into prediction (model_name, pulse_id, confidence, species_id) values (?,?,?,?);", data)
         self.conn.execute('commit;')
 
     def query(self, query, args={}):
